@@ -1,0 +1,12 @@
+{{#each data}}
+    <div style="border: 1px solid #ccc">
+        <h3>
+            <a href="/profle/{{this.id}}">{{this.name}}</a>
+            {{#if this.gender}}
+                <mark>Nam</mark>
+            {{else}}
+                <mark>Nữ</mark>            
+            {{/if}}
+        </h3>
+    </div>
+{{/each}}
