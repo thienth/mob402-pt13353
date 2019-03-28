@@ -13,4 +13,19 @@ router.get('/cates', function(req, res, next){
   })
 });
 
+router.get('/cates/add', function(req, res, next){
+  res.render('category/add-form');
+});
+
+router.post('/cates/save-add', function(req, res, next){
+  var {name, image, description} = req.body;
+  var model = new Category();
+  model.name = name;
+  model.image = image;
+  model.description = description;
+
+  model.save();
+  res.redirect('/cates');
+});
+
 module.exports = router;
