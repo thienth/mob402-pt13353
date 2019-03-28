@@ -1,0 +1,25 @@
+<table class="table table-bordered">
+    <thead>
+        <th>Tên danh mục</th>
+        <th>Ảnh danh mục</th>
+        <th width="600">Mô tả</th>
+        <th>
+            <a href="/cates/add" class="btn btn-success btn-sm">Thêm</a>
+        </th>
+    </thead>
+    <tbody>
+        {{#each cates}}
+            <tr>
+                <td>{{this.name}}</td>
+                <td>
+                    <img src="{{this.image}}" class="img-responsive" width="100">
+                </td>
+                <td>{{this.description}}</td>
+                <td>
+                    <a href="/cates/edit/{{this._id}}" class="btn btn-sm btn-primary">Sửa</a>
+                    <a href="/cates/remove/{{this._id}}" class="btn btn-sm btn-danger">Xóa</a>
+                </td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>

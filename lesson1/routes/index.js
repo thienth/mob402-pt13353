@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/cates', function(req, res, next){
   Category.find({}, function(err, data){
-    res.json(data);
+    res.render('category/index', {cates: data});
   })
 });
 
