@@ -20,6 +20,22 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+var hbs = require('hbs');
+hbs.registerHelper('target_select', (cates, ename, selectedValue) => {
+  var content = `<select name="${ename}">`
+  for(var i = 0; i < cates.length; i++){
+    content += `<option value="${cates[i]._id}"`;
+
+    if(cates[i]._id == selectedValue){
+      content += " selected ";
+    }
+    content += `>${cates[i].name}</option>`
+  }
+  content+= `</select>`;
+
+  return content;
+})
+
 /* =========ket noi mongodb===========*/
 var mongoose = require('mongoose');
 let dev_db_url = 'mongodb://localhost:27017/pt13353';
