@@ -44,7 +44,46 @@ router.post('/cates/save-add', upload.single('image'),function(req, res, next){
   model.save(function(err){
     res.redirect('/cates');
   });
-  
+ });
+
+router.get('/cates/edit/:cId', (req, res, next) => {
+  Category.findOne({_id: req.params.cId}, (err, data) => {
+    if(err){
+      res.send('Id khong ton tai');
+    }
+
+    res.render('category/edit-form', {cate: data});
+  });
 });
 
+router.post('/cates/save-edit', upload.single('image'), (req, res, next) => {
+  Category.findOne({_id: req.body.id}, (err, model) => {
+    if(err){
+      res.send('Id khong ton tai');
+    }
+
+    model.name = req.body.name;
+    model.description = req.body.description;
+    if(req.file != null){
+      model.image = req.file.path.replace('public', '');
+    }
+
+    model.save((err) => {
+      if(err){
+        res.send('cap nhat khong thanh cong');
+      }
+      res.redirect('/cates');
+    })
+  });
+});
+
+router.get('/cates/remove/:cId', (req, res, next) => {
+  Category.deleteOne({_id: req.params.cId}, (err) => {
+    if(err){
+      res.send('Xoa khong thanh cong');
+    }
+
+    res.redirect('/cates');
+  });
+})
 module.exports = router;
