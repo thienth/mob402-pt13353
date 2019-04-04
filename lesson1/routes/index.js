@@ -33,6 +33,20 @@ router.get('/products/add', async (req, res, next) => {
   res.render('product/add-form', {cates: cates});
 });
 
+router.get('/products/edit/:pId', async (req, res, next) => {
+  var cates = await Category.find({});
+  var product = await Product.findOne({_id: req.params.pId});
+
+  for (let i = 0; i < cates.length; i++) {
+    if(cates[i]._id == product.cate_id.toString()){
+      cates[i].selected = true;
+      break;
+    }
+  }
+
+  res.render('product/edit-form', {cates: cates, product: product});
+});
+
 router.post('/products/save-add', upload.single('image'), async (req, res, next) => {
   var model = new Product();
   model.name = req.body.name;
@@ -42,17 +56,40 @@ router.post('/products/save-add', upload.single('image'), async (req, res, next)
   model.image = req.file.path.replace('public', '');
   var rs = await model.save();
 
-  var cate = await Category.findOne({_id: rs.cate_id.toString()});
-  if(cate.products == undefined){
-    cate.products = [];
-  }
-  cate.products.push({
-    pro_id: rs._id,
-    pro_name: model.name,
-    pro_img: model.image
-  });
-  await cate.save();
+  // var cate = await Category.findOne({_id: rs.cate_id.toString()});
+  // if(cate.products == undefined){
+  //   cate.products = [];
+  // }
+  // cate.products.push({
+  //   pro_id: rs._id,
+  //   pro_name: model.name,
+  //   pro_img: model.image
+  // });
+  // await cate.save();
   res.redirect('/');
+});
+
+router.post('/products/save-edit', upload.single('image'), (req, res, next) => {
+  Product.findOne({_id: req.body.id}, (err, model) => {
+    if(err){
+      res.send('Id khong ton tai');
+    }
+
+    model.name = req.body.name;
+    model.price = req.body.price;
+    model.detail = req.body.detail;
+    model.cate_id = req.body.cate_id;
+    if(req.file != null){
+      model.image = req.file.path.replace('public', '');
+    }
+
+    model.save((err) => {
+      if(err){
+        res.send('cap nhat khong thanh cong');
+      }
+      res.redirect('/');
+    })
+  });
 });
 
 router.get('/cates', function(req, res, next){
