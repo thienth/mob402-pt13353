@@ -18,9 +18,41 @@ var upload = multer({storage: storage});
 
 
 var Category = require('../models/category');
+var Product = require('../models/product');
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  Product.find({})
+          .populate('cate_id')
+          .exec((err, data) => {
+            res.render('product/index', { products: data });
+          });
+});
+
+router.get('/products/add', async (req, res, next) => {
+  var cates = await Category.find({});
+  res.render('product/add-form', {cates: cates});
+});
+
+router.post('/products/save-add', upload.single('image'), async (req, res, next) => {
+  var model = new Product();
+  model.name = req.body.name;
+  model.price = req.body.price;
+  model.cate_id = req.body.cate_id;
+  model.detail = req.body.detail;
+  model.image = req.file.path.replace('public', '');
+  var rs = await model.save();
+
+  var cate = await Category.findOne({_id: rs.cate_id.toString()});
+  if(cate.products == undefined){
+    cate.products = [];
+  }
+  cate.products.push({
+    pro_id: rs._id,
+    pro_name: model.name,
+    pro_img: model.image
+  });
+  await cate.save();
+  res.redirect('/');
 });
 
 router.get('/cates', function(req, res, next){
